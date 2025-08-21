@@ -35,9 +35,8 @@ jobs:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          # You'll need to add your SSH private key as a GitHub secret
-          # echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_ed25519
-          # chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
           
       # Run Docker setup playbook
       - name: Run Docker setup playbook  
