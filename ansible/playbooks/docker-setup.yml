@@ -1,8 +1,18 @@
 ---
 - name: Install Docker and Docker Compose
-  hosts: wazuh-node
+  hosts: wazuh-vm
   become: yes
   tasks:
+    - name: Clean up problematic repositories
+      shell: |
+        # Remove Trivy repository if it exists
+        rm -f /etc/apt/sources.list.d/trivy.list
+        # Clean apt cache
+        apt-get clean
+        # Update package lists
+        apt-get update || true
+      ignore_errors: yes
+
     - name: Install required packages
       apt:
         name: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'lsb-release']
