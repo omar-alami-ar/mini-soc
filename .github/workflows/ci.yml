@@ -25,11 +25,11 @@ jobs:
       - uses: actions/checkout@v4
 
       # Install Ansible
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-pip
-          sudo pip3 install ansible
+      # - name: Install Ansible
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y python3-pip
+      #     sudo pip3 install ansible
 
       # Setup SSH key for Ansible
       - name: Setup SSH key
