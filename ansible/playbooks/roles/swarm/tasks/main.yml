@@ -33,11 +33,13 @@
   register: swarm_init
   when: swarm_status.stdout != "active"
 
-- name: Deploy stack
+
+- name: Deploy Wazuh stack
   copy:
     src: "{{ role_path }}/templates/docker-compose.yml.j2"
     dest: /home/{{ ansible_user }}/docker-compose.yml
     mode: 0644
 
-- name: Deploy app stack
-  command: docker stack deploy -c docker-compose.yml mystack
+- name: Deploy Wazuh stack on Docker Swarm
+  command: docker stack deploy -c docker-compose.yml wazuh
+

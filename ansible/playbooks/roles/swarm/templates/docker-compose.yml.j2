@@ -1,6 +1,47 @@
-version: "3.8"
+version: "3.9"
+
 services:
-  web:
-    image: nginx:alpine
+  wazuh-indexer:
+    image: wazuh/wazuh-indexer:5.3.0
+    container_name: wazuh-indexer
+    environment:
+      - cluster.name=wazuh-cluster
+    volumes:
+      - wazuh_indexer_data:/var/lib/elasticsearch
+    networks:
+      - wazuh-net
+
+  wazuh-manager:
+    image: wazuh/wazuh-manager:5.3.0
+    container_name: wazuh-manager
+    depends_on:
+      - wazuh-indexer
+    environment:
+      - ELASTICSEARCH_HOST=wazuh-indexer
+    volumes:
+      - wazuh_manager_data:/var/ossec/data
+    networks:
+      - wazuh-net
+
+  wazuh-dashboard:
+    image: wazuh/wazuh-dashboard:5.3.0
+    container_name: wazuh-dashboard
+    depends_on:
+      - wazuh-manager
     ports:
-      - "80:80"
+      - "443:443"
+    environment:
+      - ELASTICSEARCH_HOST=wazuh-indexer
+    volumes:
+      - wazuh_dashboard_data:/usr/share/wazuh-dashboard/data
+    networks:
+      - wazuh-net
+
+volumes:
+  wazuh_indexer_data:
+  wazuh_manager_data:
+  wazuh_dashboard_data:
+
+networks:
+  wazuh-net:
+    driver: overlay
