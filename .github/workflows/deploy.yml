@@ -1,0 +1,23 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy to swarm
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted  # Your VM1 runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Ansible playbook
+        run: |
+          cd ansible
+          ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml

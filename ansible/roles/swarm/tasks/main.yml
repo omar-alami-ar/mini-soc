@@ -1,0 +1,37 @@
+---
+- name: Install dependencies
+  apt:
+    name: ["apt-transport-https", "ca-certificates", "curl", "software-properties-common"]
+    state: present
+    update_cache: yes
+
+- name: Add Docker GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
+    state: present
+
+- name: Install Docker
+  apt:
+    name: ["docker-ce", "docker-ce-cli", "containerd.io"]
+    state: present
+    update_cache: yes
+
+- name: Init Swarm
+  command: docker swarm init --advertise-addr {{ ansible_host }}
+  register: swarm_init
+  failed_when: "'Error response from daemon' in swarm_init.stderr"
+  changed_when: "'This node is already part of a swarm' not in swarm_init.stderr"
+
+- name: Deploy stack
+  copy:
+    src: "{{ role_path }}/templates/docker-compose.yml.j2"
+    dest: /home/{{ ansible_user }}/docker-compose.yml
+    mode: 0644
+
+- name: Deploy app stack
+  command: docker stack deploy -c docker-compose.yml mystack
