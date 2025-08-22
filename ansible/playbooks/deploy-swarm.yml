@@ -1,6 +1,6 @@
 ---
 - name: Setup Docker Swarm and deploy stack
-  hosts: swarm_manager
+  hosts: swarm
   become: yes
 
   roles:
