@@ -35,12 +35,12 @@
 
 - name: Deploy Wazuh generator
   copy:
-    src: "{{ role_path }}/templates/generator.yml"
-    dest: /home/{{ ansible_user }}/generator.yml
+    src: "{{ role_path }}/templates/cert-generator.yml"
+    dest: /home/{{ ansible_user }}/cert-generator.yml
     mode: 0644
 
 - name: Deploy Wazuh generator on Docker Swarm
-  command: docker stack deploy -c generator.yml wazuh-generator
+  command: docker stack deploy -c cert-generator.yml wazuh-generator
 
 - name: Deploy Wazuh stack
   copy:
