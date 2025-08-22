@@ -33,6 +33,50 @@
   register: swarm_init
   when: swarm_status.stdout != "active"
 
+- name: Create config directory
+  file:
+    path: /home/{{ ansible_user }}/config
+    state: directory
+    mode: 0755
+    owner: "{{ ansible_user }}"
+
+- name: Create wazuh_indexer_ssl_certs directory
+  file:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs
+    state: directory
+    mode: 0755
+    owner: "{{ ansible_user }}"
+
+- name: Create certs.yml configuration file
+  copy:
+    content: |
+      nodes:
+        # Wazuh indexer nodes
+        indexer:
+          - name: node-1
+            ip: "{{ ansible_host }}"
+          # - name: node-2
+          #   ip: "<indexer-node-ip>"
+          # - name: node-3
+          #   ip: "<indexer-node-ip>"
+
+        # Wazuh server nodes
+        # If you have more than one Wazuh server
+        # node, add each server node here
+        server:
+          - name: wazuh-1
+            ip: "{{ ansible_host }}"
+          # - name: wazuh-2
+          #   ip: "<wazuh-manager-ip>"
+
+        # Wazuh dashboard nodes
+        dashboard:
+          - name: dashboard
+            ip: "{{ ansible_host }}"
+    dest: /home/{{ ansible_user }}/config/certs.yml
+    mode: 0644
+    owner: "{{ ansible_user }}"
+
 - name: Deploy Wazuh generator
   copy:
     src: "{{ role_path }}/templates/cert-generator.yml.j2"
