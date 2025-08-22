@@ -1,0 +1,109 @@
+---
+- name: Create directory for Wazuh certs
+  file:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs
+    state: directory
+    mode: "0755"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Generate Root CA key
+  openssl_privatekey:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.key
+    size: 4096
+    type: RSA
+  register: ca_key
+
+- name: Generate Root CA certificate
+  openssl_certificate:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.pem
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.key
+    common_name: "Wazuh-Root-CA"
+    subject:
+      organization_name: Wazuh
+      organizational_unit_name: CA
+    provider: selfsigned
+    days: 3650
+
+- name: Generate Indexer key
+  openssl_privatekey:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.indexer-key.pem
+    size: 2048
+    type: RSA
+
+- name: Generate Indexer CSR
+  openssl_csr:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.indexer.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.indexer-key.pem
+    common_name: wazuh-indexer
+
+- name: Sign Indexer certificate with CA
+  openssl_certificate:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.indexer.pem
+    csr_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.indexer.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.key
+    cacert_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.pem
+    days: 365
+
+# Manager certificates
+- name: Generate Manager key
+  openssl_privatekey:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.manager-key.pem
+    size: 2048
+    type: RSA
+
+- name: Generate Manager CSR
+  openssl_csr:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.manager.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.manager-key.pem
+    common_name: wazuh-manager
+
+- name: Sign Manager certificate with CA
+  openssl_certificate:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.manager.pem
+    csr_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.manager.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.key
+    cacert_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.pem
+    days: 365
+
+# Dashboard certificates
+- name: Generate Dashboard key
+  openssl_privatekey:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.dashboard-key.pem
+    size: 2048
+    type: RSA
+
+- name: Generate Dashboard CSR
+  openssl_csr:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.dashboard.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.dashboard-key.pem
+    common_name: wazuh-dashboard
+
+- name: Sign Dashboard certificate with CA
+  openssl_certificate:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.dashboard.pem
+    csr_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/wazuh.dashboard.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.key
+    cacert_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.pem
+    days: 365
+
+# Admin certificates
+- name: Generate Admin key
+  openssl_privatekey:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/admin-key.pem
+    size: 2048
+    type: RSA
+
+- name: Generate Admin CSR
+  openssl_csr:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/admin.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/admin-key.pem
+    common_name: admin
+
+- name: Sign Admin certificate with CA
+  openssl_certificate:
+    path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/admin.pem
+    csr_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/admin.csr
+    privatekey_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.key
+    cacert_path: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs/root-ca.pem
+    days: 365
