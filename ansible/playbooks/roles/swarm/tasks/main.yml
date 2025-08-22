@@ -35,7 +35,7 @@
 
 - name: Deploy Wazuh generator
   copy:
-    src: "{{ role_path }}/templates/cert-generator.yml"
+    src: "{{ role_path }}/templates/cert-generator.yml.j2"
     dest: /home/{{ ansible_user }}/cert-generator.yml
     mode: 0644
 
