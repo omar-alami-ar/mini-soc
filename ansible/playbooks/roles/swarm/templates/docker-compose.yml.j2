@@ -32,8 +32,6 @@ services:
       - "443:443"
     environment:
       - ELASTICSEARCH_HOST=wazuh-indexer
-    volumes:
-      - wazuh_dashboard_data:/usr/share/wazuh-dashboard/data
     networks:
       - wazuh-net
 
