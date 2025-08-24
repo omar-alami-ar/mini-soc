@@ -45,25 +45,28 @@ services:
     # Debug mode: Override command to sleep for debugging
     # Alternative: Override entrypoint if needed
     # entrypoint: ["sleep", "infinity"]
-    volumes:
-      - "{{ wazuh_cert_dir }}/wazuh-certificates:/etc/wazuh-indexer/certs:ro"
+    secrets:
+      - source: root-ca.pem
+        target: /usr/share/wazuh-indexer/certs/root-ca.pem
+        uid: "1000"
+        gid: "1000"
+        mode: 0400
+      - source: wazuh.indexer.pem
+        target: /usr/share/wazuh-indexer/certs/indexer.pem
+        uid: "1000"
+        gid: "1000"
+        mode: 0400
+      - source: wazuh.indexer-key.pem
+        target: /usr/share/wazuh-indexer/certs/indexer-key.pem
+        uid: "1000"
+        gid: "1000"
+        mode: 0400
     environment:
-      - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g -Djava.security.manager=allow
+      - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
       - bootstrap.memory_lock=true
       - discovery.type=single-node
+      - java.security.manager=
       - network.host=0.0.0.0
-      - cluster.name=wazuh-cluster
-      - node.name=wazuh-indexer
-      - plugins.security.disabled=false
-      - plugins.security.ssl.transport.pemcert_filepath=/etc/wazuh-indexer/certs/wazuh.indexer.pem
-      - plugins.security.ssl.transport.pemkey_filepath=/etc/wazuh-indexer/certs/wazuh.indexer-key.pem
-      - plugins.security.ssl.transport.pemtrustedcas_filepath=/etc/wazuh-indexer/certs/root-ca.pem
-      - plugins.security.ssl.http.enabled=true
-      - plugins.security.ssl.http.pemcert_filepath=/etc/wazuh-indexer/certs/wazuh.indexer.pem
-      - plugins.security.ssl.http.pemkey_filepath=/etc/wazuh-indexer/certs/wazuh.indexer-key.pem
-      - plugins.security.ssl.http.pemtrustedcas_filepath=/etc/wazuh-indexer/certs/root-ca.pem
-      - plugins.security.nodes_dn=CN=wazuh.indexer,OU=Wazuh,O=Wazuh,L=California,C=US
-      - plugins.security.authcz.admin_dn=CN=admin,OU=Wazuh,O=Wazuh,L=California,C=US
     ulimits:
       memlock:
         soft: -1
