@@ -61,8 +61,11 @@ services:
     #     uid: "1000"
     #     gid: "1000"
     #     mode: 0400
+    mounts:
+      - type: bind
+        source: /home/mleo691/config/wazuh-logs
+        target: /var/log/wazuh-indexer
     volumes:
-      - /home/mleo691/config/wazuh-logs:/var/log/wazuh-indexer
       - "{{ wazuh_cert_dir }}/wazuh-certificates:/etc/wazuh-indexer/certs:ro"
     environment:
       - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
