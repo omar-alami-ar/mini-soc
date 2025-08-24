@@ -11,6 +11,22 @@
     dest: "{{ wazuh_cert_dir }}/wazuh-certs-tool.sh"
     mode: '0755'
 
+- name: Deploy Wazuh cert configuration
+  copy:
+    dest: "{{ wazuh_cert_dir }}/config.yml"
+    content: |
+      nodes:
+        - name: wazuh.manager
+          ip: 127.0.0.1
+        - name: wazuh.indexer
+          ip: 127.0.0.1
+        - name: wazuh.dashboard
+          ip: 127.0.0.1
+      ca:
+        expiration_days: 3650
+      cert:
+        expiration_days: 365
+
 - name: Generate Wazuh certificates (idempotent)
   command: "./wazuh-certs-tool.sh -A"
   args:
