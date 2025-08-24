@@ -28,11 +28,24 @@
           - name: wazuh.dashboard
             ip: 127.0.0.1
 
+- name: Debug - Show cert directory contents before generation
+  command: ls -la "{{ wazuh_cert_dir }}"
+  register: cert_dir_before
+  
+- name: Debug - Show cert directory contents before generation
+  debug:
+    var: cert_dir_before.stdout_lines
+
 - name: Generate Wazuh certificates (idempotent)
   command: "./wazuh-certs-tool.sh -A"
   args:
     chdir: "{{ wazuh_cert_dir }}"
     creates: "{{ wazuh_cert_dir }}/wazuh-certificates/root-ca.pem"
+  register: cert_generation_result
+
+- name: Debug - Show certificate generation output
+  debug:
+    var: cert_generation_result
 
 - name: Check if certificates directory exists
   stat:
@@ -48,6 +61,24 @@
     recurse: yes
   when: ansible_stat_result.stat.exists
 
+- name: Debug - List contents of cert directory
+  command: find "{{ wazuh_cert_dir }}" -type f -name "*.pem"
+  register: cert_files_found
+  ignore_errors: yes
+
+- name: Debug - Show found certificate files
+  debug:
+    var: cert_files_found.stdout_lines
+
+- name: Debug - List wazuh-certificates directory contents
+  command: ls -la "{{ wazuh_cert_dir }}/wazuh-certificates/"
+  register: cert_dir_contents
+  ignore_errors: yes
+
+- name: Debug - Show wazuh-certificates directory contents
+  debug:
+    var: cert_dir_contents.stdout_lines
+
 - name: Create Docker secrets from generated certs
   docker_secret:
     name: "{{ item }}"
@@ -61,6 +92,7 @@
     - wazuh.indexer-key.pem
     - wazuh.dashboard.pem
     - wazuh.dashboard-key.pem
+  when: cert_files_found.stdout_lines | length > 0
 
 - name: Deploy Wazuh stack file
   template:
