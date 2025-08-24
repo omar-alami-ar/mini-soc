@@ -8,15 +8,15 @@ services:
       - "1515:1515"
     secrets:
       - source: root-ca.pem
-        target: /certs/root-ca.pem
+        target: /etc/wazuh-manager/certs/root-ca.pem
       - source: wazuh.manager.pem
-        target: /certs/manager.pem
+        target: /etc/wazuh-manager/certs/manager.pem
       - source: wazuh.manager-key.pem
-        target: /certs/manager-key.pem
+        target: /etc/wazuh-manager/certs/manager-key.pem
     environment:
-      - WAZUH_MANAGER_CERT=/certs/manager.pem
-      - WAZUH_MANAGER_KEY=/certs/manager-key.pem
-      - WAZUH_CA_CERT=/certs/root-ca.pem
+      - WAZUH_MANAGER_CERT=/etc/wazuh-manager/certs/manager.pem
+      - WAZUH_MANAGER_KEY=/etc/wazuh-manager/certs/manager-key.pem
+      - WAZUH_CA_CERT=/etc/wazuh-manager/certs/root-ca.pem
     deploy:
       replicas: 1
       placement:
@@ -26,15 +26,15 @@ services:
     image: wazuh/wazuh-indexer:4.10.3
     secrets:
       - source: root-ca.pem
-        target: /certs/root-ca.pem
+        target: /etc/wazuh-indexer/certs/root-ca.pem
       - source: wazuh.indexer.pem
-        target: /certs/indexer.pem
+        target: /etc/wazuh-indexer/certs/indexer.pem
       - source: wazuh.indexer-key.pem
-        target: /certs/indexer-key.pem
+        target: /etc/wazuh-indexer/certs/indexer-key.pem
     environment:
-      - INDEXER_CERT=/certs/indexer.pem
-      - INDEXER_KEY=/certs/indexer-key.pem
-      - CA_CERT=/certs/root-ca.pem
+      - INDEXER_CERT=/etc/wazuh-indexer/certs/indexer.pem
+      - INDEXER_KEY=/etc/wazuh-indexer/certs/indexer-key.pem
+      - CA_CERT=/etc/wazuh-indexer/certs/root-ca.pem
     deploy:
       replicas: 1
 
