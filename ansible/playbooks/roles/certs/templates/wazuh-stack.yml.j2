@@ -1,0 +1,73 @@
+version: "3.9"
+
+services:
+  wazuh.manager:
+    image: wazuh/wazuh-manager:latest
+    ports:
+      - "1514:1514/udp"
+      - "1515:1515"
+    secrets:
+      - source: root-ca.pem
+        target: /certs/root-ca.pem
+      - source: wazuh.manager.pem
+        target: /certs/manager.pem
+      - source: wazuh.manager-key.pem
+        target: /certs/manager-key.pem
+    environment:
+      - WAZUH_MANAGER_CERT=/certs/manager.pem
+      - WAZUH_MANAGER_KEY=/certs/manager-key.pem
+      - WAZUH_CA_CERT=/certs/root-ca.pem
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+
+  wazuh.indexer:
+    image: wazuh/wazuh-indexer:latest
+    secrets:
+      - source: root-ca.pem
+        target: /certs/root-ca.pem
+      - source: wazuh.indexer.pem
+        target: /certs/indexer.pem
+      - source: wazuh.indexer-key.pem
+        target: /certs/indexer-key.pem
+    environment:
+      - INDEXER_CERT=/certs/indexer.pem
+      - INDEXER_KEY=/certs/indexer-key.pem
+      - CA_CERT=/certs/root-ca.pem
+    deploy:
+      replicas: 1
+
+  wazuh.dashboard:
+    image: wazuh/wazuh-dashboard:latest
+    ports:
+      - "5601:5601"
+    secrets:
+      - source: root-ca.pem
+        target: /certs/root-ca.pem
+      - source: wazuh.dashboard.pem
+        target: /certs/dashboard.pem
+      - source: wazuh.dashboard-key.pem
+        target: /certs/dashboard-key.pem
+    environment:
+      - DASHBOARD_CERT=/certs/dashboard.pem
+      - DASHBOARD_KEY=/certs/dashboard-key.pem
+      - CA_CERT=/certs/root-ca.pem
+    deploy:
+      replicas: 1
+
+secrets:
+  root-ca.pem:
+    external: true
+  wazuh.manager.pem:
+    external: true
+  wazuh.manager-key.pem:
+    external: true
+  wazuh.indexer.pem:
+    external: true
+  wazuh.indexer-key.pem:
+    external: true
+  wazuh.dashboard.pem:
+    external: true
+  wazuh.dashboard-key.pem:
+    external: true
