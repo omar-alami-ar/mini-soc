@@ -41,7 +41,6 @@ services:
     image: wazuh/wazuh-indexer:4.10.3
     ports:
       - "9200:9200"
-    command: "sleep infinity"
     # Set directory permissions and start indexer
     # Debug mode: Override command to sleep for debugging
     # Alternative: Override entrypoint if needed
@@ -68,6 +67,9 @@ services:
       - discovery.type=single-node
       - java.security.manager=
       - network.host=0.0.0.0
+      - INDEXER_CERT=/usr/share/wazuh-indexer/certs/indexer.pem
+      - INDEXER_KEY=/usr/share/wazuh-indexer/certs/indexer-key.pem
+      - CA_CERT=/usr/share/wazuh-indexer/certs/root-ca.pem
     ulimits:
       memlock:
         soft: -1
