@@ -1,5 +1,5 @@
 ---
 # Variables for the certs role
 ansible_user: mleo691
-wazuh_cert_dir: /config/wazuh_indexer_ssl_certs
-wazuh_stack_file: /config/wazuh-stack.yml
+wazuh_cert_dir: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs
+wazuh_stack_file: /home/{{ ansible_user }}/config/wazuh-stack.yml
