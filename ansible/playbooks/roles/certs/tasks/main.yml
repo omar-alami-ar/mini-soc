@@ -54,7 +54,7 @@
     state: present
   become: yes
   loop:
-    - python3-pipx
+    - pipx
     - python3-setuptools
   ignore_errors: yes
 
