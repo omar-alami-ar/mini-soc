@@ -53,11 +53,11 @@ services:
         soft: 65536
         hard: 65536
     volumes:
-      - ./config/wazuh_indexer_ssl_certs/wazuh-certificates/root-ca.pem:/usr/share/wazuh-indexer/certs/root-ca.pem
-      - ./config/wazuh_indexer_ssl_certs/wazuh-certificates/wazuh.indexer-key.pem:/usr/share/wazuh-indexer/certs/wazuh.indexer.key
-      - ./config/wazuh_indexer_ssl_certs/wazuh-certificates/wazuh.indexer.pem:/usr/share/wazuh-indexer/certs/wazuh.indexer.pem
-      - ./config/wazuh_indexer_ssl_certs/wazuh-certificates/admin.pem:/usr/share/wazuh-indexer/certs/admin.pem
-      - ./config/wazuh_indexer_ssl_certs/wazuh-certificates/admin-key.pem:/usr/share/wazuh-indexer/certs/admin-key.pem
+      - "{{ wazuh_cert_dir }}/wazuh-certificates/root-ca.pem:/usr/share/wazuh-indexer/certs/root-ca.pem"
+      - "{{ wazuh_cert_dir }}/wazuh-certificates/wazuh.indexer-key.pem:/usr/share/wazuh-indexer/certs/wazuh.indexer.key"
+      - "{{ wazuh_cert_dir }}/wazuh-certificates/wazuh.indexer.pem:/usr/share/wazuh-indexer/certs/wazuh.indexer.pem"
+      - "{{ wazuh_cert_dir }}/wazuh-certificates/admin.pem:/usr/share/wazuh-indexer/certs/admin.pem"
+      - "{{ wazuh_cert_dir }}/wazuh-certificates/admin-key.pem:/usr/share/wazuh-indexer/certs/admin-key.pem"
 
   wazuh-dashboard:
     image: wazuh/wazuh-dashboard:4.10.3
