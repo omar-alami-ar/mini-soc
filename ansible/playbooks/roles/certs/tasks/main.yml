@@ -1,117 +1,117 @@
----
-- name: Ensure certs directory exists
-  file:
-    path: "{{ wazuh_cert_dir }}"
-    state: directory
-    mode: '0755'
+# ---
+# - name: Ensure certs directory exists
+#   file:
+#     path: "{{ wazuh_cert_dir }}"
+#     state: directory
+#     mode: '0755'
 
-- name: Download wazuh-certs-tool.sh
-  get_url:
-    url: "https://packages.wazuh.com/4.12/wazuh-certs-tool.sh"
-    dest: "{{ wazuh_cert_dir }}/wazuh-certs-tool.sh"
-    mode: '0755'
+# - name: Download wazuh-certs-tool.sh
+#   get_url:
+#     url: "https://packages.wazuh.com/4.12/wazuh-certs-tool.sh"
+#     dest: "{{ wazuh_cert_dir }}/wazuh-certs-tool.sh"
+#     mode: '0755'
 
-- name: Deploy Wazuh cert configuration
-  copy:
-    dest: "{{ wazuh_cert_dir }}/config.yml"
-    content: |
-      nodes:
-        indexer:
-          - name: wazuh.indexer
-            ip: 127.0.0.1
+# - name: Deploy Wazuh cert configuration
+#   copy:
+#     dest: "{{ wazuh_cert_dir }}/config.yml"
+#     content: |
+#       nodes:
+#         indexer:
+#           - name: wazuh.indexer
+#             ip: 127.0.0.1
 
-        server:
-          - name: wazuh.manager
-            ip: 127.0.0.1
+#         server:
+#           - name: wazuh.manager
+#             ip: 127.0.0.1
 
-        dashboard:
-          - name: wazuh.dashboard
-            ip: 127.0.0.1
+#         dashboard:
+#           - name: wazuh.dashboard
+#             ip: 127.0.0.1
 
-- name: Check if certificates already exist
-  stat:
-    path: "{{ wazuh_cert_dir }}/wazuh-certificates/{{ item }}"
-  register: existing_certs
-  loop:
-    - root-ca.pem
-    - wazuh.manager.pem
-    - wazuh.indexer.pem
-    - wazuh.dashboard.pem
+# - name: Check if certificates already exist
+#   stat:
+#     path: "{{ wazuh_cert_dir }}/wazuh-certificates/{{ item }}"
+#   register: existing_certs
+#   loop:
+#     - root-ca.pem
+#     - wazuh.manager.pem
+#     - wazuh.indexer.pem
+#     - wazuh.dashboard.pem
 
-- name: Set certificates exist fact
-  set_fact:
-    certificates_exist: "{{ existing_certs.results | selectattr('stat.exists') | list | length == 4 }}"
+# - name: Set certificates exist fact
+#   set_fact:
+#     certificates_exist: "{{ existing_certs.results | selectattr('stat.exists') | list | length == 4 }}"
 
-- name: Display certificate generation status
-  debug:
-    msg: "{{ 'Certificates already exist, skipping generation' if certificates_exist else 'Certificates not found, will generate them' }}"
+# - name: Display certificate generation status
+#   debug:
+#     msg: "{{ 'Certificates already exist, skipping generation' if certificates_exist else 'Certificates not found, will generate them' }}"
 
-- name: Generate Wazuh certificates
-  command: "./wazuh-certs-tool.sh -A"
-  args:
-    chdir: "{{ wazuh_cert_dir }}"
-  when: not certificates_exist
-  register: cert_generation_result
+# - name: Generate Wazuh certificates
+#   command: "./wazuh-certs-tool.sh -A"
+#   args:
+#     chdir: "{{ wazuh_cert_dir }}"
+#   when: not certificates_exist
+#   register: cert_generation_result
 
-- name: Check if certificates directory exists
-  stat:
-    path: "{{ wazuh_cert_dir }}/wazuh-certificates"
-  register: cert_stat_result
+# - name: Check if certificates directory exists
+#   stat:
+#     path: "{{ wazuh_cert_dir }}/wazuh-certificates"
+#   register: cert_stat_result
 
-- name: Fix ownership of generated certificates directory
-  file:
-    path: "{{ wazuh_cert_dir }}/wazuh-certificates"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: '0755'
-    recurse: yes
-  when: cert_stat_result.stat.exists and not certificates_exist
+# - name: Fix ownership of generated certificates directory
+#   file:
+#     path: "{{ wazuh_cert_dir }}/wazuh-certificates"
+#     owner: "{{ ansible_user }}"
+#     group: "{{ ansible_user }}"
+#     mode: '0755'
+#     recurse: yes
+#   when: cert_stat_result.stat.exists and not certificates_exist
 
-- name: Install Docker Python SDK via system package manager
-  package:
-    name: python3-docker
-    state: present
-  become: yes
-  ignore_errors: yes
-  register: docker_system_install
+# - name: Install Docker Python SDK via system package manager
+#   package:
+#     name: python3-docker
+#     state: present
+#   become: yes
+#   ignore_errors: yes
+#   register: docker_system_install
 
-- name: Install pip3 if system Docker SDK installation failed
-  package:
-    name: python3-pip
-    state: present
-  become: yes
-  when: docker_system_install.failed | default(false)
+# - name: Install pip3 if system Docker SDK installation failed
+#   package:
+#     name: python3-pip
+#     state: present
+#   become: yes
+#   when: docker_system_install.failed | default(false)
 
-- name: Install Docker Python SDK via pip (fallback)
-  pip:
-    name: docker
-    state: present
-    executable: pip3
-    extra_args: --break-system-packages
-  become: yes
-  when: docker_system_install.failed | default(false)
+# - name: Install Docker Python SDK via pip (fallback)
+#   pip:
+#     name: docker
+#     state: present
+#     executable: pip3
+#     extra_args: --break-system-packages
+#   become: yes
+#   when: docker_system_install.failed | default(false)
 
-- name: Read certificate files from target host
-  slurp:
-    src: "{{ wazuh_cert_dir }}/wazuh-certificates/{{ item }}"
-  register: cert_content
-  loop:
-    - root-ca.pem
-    - wazuh.manager.pem
-    - wazuh.manager-key.pem
-    - wazuh.indexer.pem
-    - wazuh.indexer-key.pem
-    - wazuh.dashboard.pem
-    - wazuh.dashboard-key.pem
-  when: cert_stat_result.stat.exists
+# - name: Read certificate files from target host
+#   slurp:
+#     src: "{{ wazuh_cert_dir }}/wazuh-certificates/{{ item }}"
+#   register: cert_content
+#   loop:
+#     - root-ca.pem
+#     - wazuh.manager.pem
+#     - wazuh.manager-key.pem
+#     - wazuh.indexer.pem
+#     - wazuh.indexer-key.pem
+#     - wazuh.dashboard.pem
+#     - wazuh.dashboard-key.pem
+#   when: cert_stat_result.stat.exists
 
-- name: Create Docker secrets from certificates
-  docker_secret:
-    name: "{{ item.item }}"
-    state: present
-    data: "{{ item.content | b64decode }}"
-  loop: "{{ cert_content.results }}"
-  when: cert_stat_result.stat.exists and not item.skipped | default(false)
+# - name: Create Docker secrets from certificates
+#   docker_secret:
+#     name: "{{ item.item }}"
+#     state: present
+#     data: "{{ item.content | b64decode }}"
+#   loop: "{{ cert_content.results }}"
+#   when: cert_stat_result.stat.exists and not item.skipped | default(false)
 
 - name: Deploy Wazuh stack file
   template:
