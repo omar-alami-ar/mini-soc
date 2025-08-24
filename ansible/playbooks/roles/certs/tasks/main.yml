@@ -32,7 +32,21 @@
   command: "./wazuh-certs-tool.sh -A"
   args:
     chdir: "{{ wazuh_cert_dir }}"
-    creates: "{{ wazuh_cert_dir }}/root-ca.pem"
+    creates: "{{ wazuh_cert_dir }}/wazuh-certificates/root-ca.pem"
+
+- name: Check if certificates directory exists
+  stat:
+    path: "{{ wazuh_cert_dir }}/wazuh-certificates"
+  register: ansible_stat_result
+
+- name: Fix ownership of generated certificates directory
+  file:
+    path: "{{ wazuh_cert_dir }}/wazuh-certificates"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+    recurse: yes
+  when: ansible_stat_result.stat.exists
 
 - name: Create Docker secrets from generated certs
   docker_secret:
