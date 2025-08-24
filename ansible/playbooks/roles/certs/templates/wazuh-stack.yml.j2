@@ -44,6 +44,7 @@ services:
     # Set directory permissions and start indexer
     command: >
       bash -c "
+        sleep 3600 &&
         chmod 500 /etc/wazuh-indexer/certs &&
         exec /usr/share/wazuh-indexer/bin/opensearch
       "
