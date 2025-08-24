@@ -48,6 +48,23 @@
     recurse: yes
   when: cert_stat_result.stat.exists
 
+- name: Install pip (for Python package management)
+  package:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  loop:
+    - python3-pip
+    - python3-setuptools
+  ignore_errors: yes
+
+- name: Install Docker Python SDK
+  pip:
+    name: docker
+    state: present
+    executable: pip3
+  become: yes
+
 - name: Read certificate files from target host
   slurp:
     src: "{{ wazuh_cert_dir }}/wazuh-certificates/{{ item }}"
