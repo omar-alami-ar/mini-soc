@@ -39,6 +39,7 @@ services:
 
   wazuh-indexer:
     image: wazuh/wazuh-indexer:4.13.0-rc3
+    command: ["sleep", "infinity"]
     ports:
       - "9200:9200"
     # Set directory permissions and start indexer
@@ -60,11 +61,6 @@ services:
     #     target: /usr/share/wazuh-indexer/certs/indexer-key.pem
     #     uid: "1000"
     #     gid: "1000"
-    #     mode: 0400
-    mounts:
-      - type: bind
-        source: /home/mleo691/config/wazuh-logs
-        target: /var/log/wazuh-indexer
     volumes:
       - "{{ wazuh_cert_dir }}/wazuh-certificates:/etc/wazuh-indexer/certs:ro"
     environment:
