@@ -37,7 +37,7 @@ services:
       placement:
         constraints: [node.role == manager]
 
-    wazuh-indexer:
+  wazuh-indexer:
     image: wazuh/wazuh-indexer:4.10.3
     ports:
       - "9200:9200"
