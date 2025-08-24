@@ -58,6 +58,7 @@ services:
       - "{{ wazuh_cert_dir }}/wazuh-certificates/wazuh.indexer.pem:/usr/share/wazuh-indexer/certs/wazuh.indexer.pem"
       - "{{ wazuh_cert_dir }}/wazuh-certificates/admin.pem:/usr/share/wazuh-indexer/certs/admin.pem"
       - "{{ wazuh_cert_dir }}/wazuh-certificates/admin-key.pem:/usr/share/wazuh-indexer/certs/admin-key.pem"
+      - wazuh-indexer-logs:/var/log/wazuh-indexer
 
   wazuh-dashboard:
     image: wazuh/wazuh-dashboard:4.10.3
@@ -108,6 +109,7 @@ secrets:
     external: true
   wazuh.dashboard-key.pem:
     external: true
-  
+
 volumes:
   wazuh-indexer-data:
+  wazuh-indexer-logs:
