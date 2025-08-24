@@ -44,15 +44,15 @@ services:
       - "5601:5601"
     secrets:
       - source: root-ca.pem
-        target: /certs/root-ca.pem
+        target: /etc/wazuh-dashboard/certs/root-ca.pem
       - source: wazuh.dashboard.pem
-        target: /certs/dashboard.pem
+        target: /etc/wazuh-dashboard/certs/dashboard.pem
       - source: wazuh.dashboard-key.pem
-        target: /certs/dashboard-key.pem
+        target: /etc/wazuh-dashboard/certs/dashboard-key.pem
     environment:
-      - DASHBOARD_CERT=/certs/dashboard.pem
-      - DASHBOARD_KEY=/certs/dashboard-key.pem
-      - CA_CERT=/certs/root-ca.pem
+      - DASHBOARD_CERT=/etc/wazuh-dashboard/certs/dashboard.pem
+      - DASHBOARD_KEY=/etc/wazuh-dashboard/certs/dashboard-key.pem
+      - CA_CERT=/etc/wazuh-dashboard/certs/root-ca.pem
     deploy:
       replicas: 1
 
