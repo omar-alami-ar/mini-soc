@@ -41,6 +41,8 @@ services:
     image: wazuh/wazuh-indexer:4.10.3
     ports:
       - "9200:9200"
+    # Debug mode: Override command to sleep for debugging
+    command: ["sleep", "infinity"]
     # Alternative: Override entrypoint if needed
     # entrypoint: ["sleep", "infinity"]
     secrets:
