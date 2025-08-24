@@ -38,7 +38,7 @@ services:
         constraints: [node.role == manager]
 
   wazuh-indexer:
-    image: wazuh/wazuh-indexer:4.12.0
+    image: wazuh/wazuh-indexer:4.10.3
     ports:
       - "9200:9200"
     # Set directory permissions and start indexer
@@ -47,17 +47,17 @@ services:
     # entrypoint: ["sleep", "infinity"]
     secrets:
       - source: root-ca.pem
-        target: /usr/share/wazuh-indexer/config/certs/root-ca.pem
+        target: /etc/wazuh-indexer/certs/root-ca.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
       - source: wazuh.indexer.pem
-        target: /usr/share/wazuh-indexer/config/certs/indexer.pem
+        target: /etc/wazuh-indexer/certs/indexer.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
       - source: wazuh.indexer-key.pem
-        target: /usr/share/wazuh-indexer/config/certs/indexer-key.pem
+        target: /etc/wazuh-indexer/certs/indexer-key.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
@@ -65,11 +65,11 @@ services:
       - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      - java.security.manager=allow
+      - java.security.manager=
       - network.host=0.0.0.0
-      - INDEXER_CERT=/usr/share/wazuh-indexer/config/certs/indexer.pem
-      - INDEXER_KEY=/usr/share/wazuh-indexer/config/certs/indexer-key.pem
-      - CA_CERT=/usr/share/wazuh-indexer/config/certs/root-ca.pem
+      - INDEXER_CERT=/etc/wazuh-indexer/certs/indexer.pem
+      - INDEXER_KEY=/etc/wazuh-indexer/certs/indexer-key.pem
+      - CA_CERT=/etc/wazuh-indexer/certs/root-ca.pem
     ulimits:
       memlock:
         soft: -1
