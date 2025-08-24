@@ -105,7 +105,7 @@
     - wazuh.dashboard-key.pem
   when: cert_stat_result.stat.exists
 
-- name: Create Docker secrets from generated certs
+- name: Create Docker secrets from certificates
   docker_secret:
     name: "{{ item.item }}"
     state: present
