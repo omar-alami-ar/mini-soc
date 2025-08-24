@@ -46,17 +46,17 @@ services:
         target: /etc/wazuh-indexer/certs/root-ca.pem
         uid: "1000"
         gid: "1000"
-        mode: 0400
+        mode: 0666
       - source: wazuh.indexer.pem
         target: /etc/wazuh-indexer/certs/indexer.pem
         uid: "1000"
         gid: "1000"
-        mode: 0400
+        mode: 0666
       - source: wazuh.indexer-key.pem
         target: /etc/wazuh-indexer/certs/indexer-key.pem
         uid: "1000"
         gid: "1000"
-        mode: 0400
+        mode: 0666
     environment:
       - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
       - bootstrap.memory_lock=true
