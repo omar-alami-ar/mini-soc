@@ -1,4 +1,3 @@
----
 - name: Ensure certs directory exists
   file:
     path: "{{ wazuh_cert_dir }}"
