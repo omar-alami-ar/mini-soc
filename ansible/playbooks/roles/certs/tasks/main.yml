@@ -54,7 +54,7 @@
     state: present
   become: yes
   loop:
-    - python3-pip
+    - python3-pipx
     - python3-setuptools
   ignore_errors: yes
 
@@ -62,7 +62,7 @@
   pip:
     name: docker
     state: present
-    executable: pip3
+    executable: pipx
   become: yes
 
 - name: Read certificate files from target host
