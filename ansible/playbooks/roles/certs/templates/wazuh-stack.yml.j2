@@ -38,7 +38,7 @@ services:
         constraints: [node.role == manager]
 
   wazuh-indexer:
-    image: wazuh/wazuh-indexer:4.12.0
+    image: wazuh/wazuh-indexer:4.10.3
     hostname: wazuh.indexer
     restart: always
     ports:
