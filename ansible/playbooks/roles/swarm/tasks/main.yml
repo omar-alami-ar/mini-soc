@@ -86,12 +86,12 @@
 # - name: Deploy Wazuh generator on Docker Swarm
 #   command: docker stack deploy -c cert-generator.yml wazuh-generator
 
-- name: Deploy Wazuh stack
-  copy:
-    src: "{{ role_path }}/templates/docker-compose.yml.j2"
-    dest: /home/{{ ansible_user }}/docker-compose.yml
-    mode: 0644
+# - name: Deploy Wazuh stack
+#   copy:
+#     src: "{{ role_path }}/templates/docker-compose.yml.j2"
+#     dest: /home/{{ ansible_user }}/docker-compose.yml
+#     mode: 0644
 
-- name: Deploy Wazuh stack on Docker Swarm
-  command: docker stack deploy -c docker-compose.yml wazuh
+# - name: Deploy Wazuh stack on Docker Swarm
+#   command: docker stack deploy -c docker-compose.yml wazuh
 
