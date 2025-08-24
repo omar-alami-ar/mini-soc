@@ -28,11 +28,30 @@
           - name: wazuh.dashboard
             ip: 127.0.0.1
 
-- name: Generate Wazuh certificates (idempotent)
+- name: Check if certificates already exist
+  stat:
+    path: "{{ wazuh_cert_dir }}/wazuh-certificates/{{ item }}"
+  register: existing_certs
+  loop:
+    - root-ca.pem
+    - wazuh.manager.pem
+    - wazuh.indexer.pem
+    - wazuh.dashboard.pem
+
+- name: Set certificates exist fact
+  set_fact:
+    certificates_exist: "{{ existing_certs.results | selectattr('stat.exists') | list | length == 4 }}"
+
+- name: Display certificate generation status
+  debug:
+    msg: "{{ 'Certificates already exist, skipping generation' if certificates_exist else 'Certificates not found, will generate them' }}"
+
+- name: Generate Wazuh certificates
   command: "./wazuh-certs-tool.sh -A"
   args:
     chdir: "{{ wazuh_cert_dir }}"
-    creates: "{{ wazuh_cert_dir }}/wazuh-certificates/root-ca.pem"
+  when: not certificates_exist
+  register: cert_generation_result
 
 - name: Check if certificates directory exists
   stat:
@@ -46,7 +65,7 @@
     group: "{{ ansible_user }}"
     mode: '0755'
     recurse: yes
-  when: cert_stat_result.stat.exists
+  when: cert_stat_result.stat.exists and not certificates_exist
 
 - name: Install Docker Python SDK via system package manager
   package:
