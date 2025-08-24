@@ -1,48 +1,40 @@
 ---
-- name: Deploy Wazuh on Docker Swarm
-  hosts: swarm_manager
-  become: yes
-  vars:
-    wazuh_cert_dir: /config/wazuh_indexer_ssl_certs
-    wazuh_stack_file: /config/wazuh-stack.yml
+- name: Ensure certs directory exists
+  file:
+    path: "{{ wazuh_cert_dir }}"
+    state: directory
+    mode: '0755'
 
-  tasks:
-    - name: Ensure certs directory exists
-      file:
-        path: "{{ wazuh_cert_dir }}"
-        state: directory
-        mode: '0755'
+- name: Download wazuh-certs-tool.sh
+  get_url:
+    url: "https://packages.wazuh.com/4.12/wazuh-certs-tool.sh"
+    dest: "{{ wazuh_cert_dir }}/wazuh-certs-tool.sh"
+    mode: '0755'
 
-    - name: Download wazuh-certs-tool.sh
-      get_url:
-        url: "https://packages.wazuh.com/4.12/wazuh-certs-tool.sh"
-        dest: "{{ wazuh_cert_dir }}/wazuh-certs-tool.sh"
-        mode: '0755'
+- name: Generate Wazuh certificates (idempotent)
+  command: "./wazuh-cert-tool.sh -A"
+  args:
+    chdir: "{{ wazuh_cert_dir }}"
+  creates: "{{ wazuh_cert_dir }}/root-ca.pem"
 
-    - name: Generate Wazuh certificates (idempotent)
-      command: "./wazuh-cert-tool.sh -A"
-      args:
-        chdir: "{{ wazuh_cert_dir }}"
-      creates: "{{ wazuh_cert_dir }}/root-ca.pem"
+- name: Create Docker secrets from generated certs
+  docker_secret:
+    name: "{{ item }}"
+    state: present
+    data: "{{ lookup('file', wazuh_cert_dir + '/' + item) }}"
+  loop:
+    - root-ca.pem
+    - wazuh.manager.pem
+    - wazuh.manager-key.pem
+    - wazuh.indexer.pem
+    - wazuh.indexer-key.pem
+    - wazuh.dashboard.pem
+    - wazuh.dashboard-key.pem
 
-    - name: Create Docker secrets from generated certs
-      docker_secret:
-        name: "{{ item }}"
-        state: present
-        data: "{{ lookup('file', wazuh_cert_dir + '/' + item) }}"
-      loop:
-        - root-ca.pem
-        - wazuh.manager.pem
-        - wazuh.manager-key.pem
-        - wazuh.indexer.pem
-        - wazuh.indexer-key.pem
-        - wazuh.dashboard.pem
-        - wazuh.dashboard-key.pem
+- name: Deploy Wazuh stack file
+  template:
+    src: wazuh-stack.yml.j2
+    dest: "{{ wazuh_stack_file }}"
 
-    - name: Deploy Wazuh stack file
-      template:
-        src: wazuh-stack.yml.j2
-        dest: "{{ wazuh_stack_file }}"
-
-    - name: Deploy Wazuh stack
-      command: docker stack deploy -c {{ wazuh_stack_file }} wazuh
+- name: Deploy Wazuh stack
+  command: docker stack deploy -c {{ wazuh_stack_file }} wazuh
