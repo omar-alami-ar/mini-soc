@@ -41,6 +41,7 @@ services:
     image: wazuh/wazuh-indexer:4.10.3
     ports:
       - "9200:9200"
+    command: "sleep infinity"
     # Set directory permissions and start indexer
     # Debug mode: Override command to sleep for debugging
     # Alternative: Override entrypoint if needed
