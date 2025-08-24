@@ -38,7 +38,7 @@ services:
         constraints: [node.role == manager]
 
   wazuh-indexer:
-    image: wazuh/wazuh-indexer:4.10.3
+    image: wazuh/wazuh-indexer:4.13.0-rc3
     ports:
       - "9200:9200"
     # Set directory permissions and start indexer
