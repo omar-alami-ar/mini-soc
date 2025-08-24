@@ -38,7 +38,7 @@
   docker_secret:
     name: "{{ item }}"
     state: present
-    data: "{{ lookup('file', wazuh_cert_dir + '/' + item) }}"
+    data: "{{ lookup('file', wazuh_cert_dir + '/wazuh-certificates/' + item) }}"
   loop:
     - root-ca.pem
     - wazuh.manager.pem
