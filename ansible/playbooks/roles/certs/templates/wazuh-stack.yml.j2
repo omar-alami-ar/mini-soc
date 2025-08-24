@@ -37,7 +37,7 @@ services:
       placement:
         constraints: [node.role == manager]
 
-  wazuh.indexer:
+  wazuh-indexer:
     image: wazuh/wazuh-indexer:4.13.0-rc3
     hostname: wazuh.indexer
     restart: always
