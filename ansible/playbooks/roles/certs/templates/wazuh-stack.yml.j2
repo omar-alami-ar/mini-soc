@@ -41,22 +41,23 @@ services:
     image: wazuh/wazuh-indexer:4.10.3
     ports:
       - "9200:9200"
+    command: ["sleep", "infinity"]
     # Debug mode: Override command to sleep for debugging
     # Alternative: Override entrypoint if needed
     # entrypoint: ["sleep", "infinity"]
     secrets:
       - source: root-ca.pem
-        target: /usr/share/wazuh-indexer/config/certs/root-ca.pem
+        target: /certs/root-ca.pem
         uid: "1000"
         gid: "1000"
         mode: 0777
       - source: wazuh.indexer.pem
-        target: /usr/share/wazuh-indexer/config/certs/indexer.pem
+        target: /certs/indexer.pem
         uid: "1000"
         gid: "1000"
         mode: 0777
       - source: wazuh.indexer-key.pem
-        target: /usr/share/wazuh-indexer/config/certs/indexer-key.pem
+        target: /certs/indexer-key.pem
         uid: "1000"
         gid: "1000"
         mode: 0777
@@ -66,6 +67,9 @@ services:
       - discovery.type=single-node
       - java.security.manager=allow
       - network.host=0.0.0.0
+      - INDEXER_CERT=/certs/indexer.pem
+      - INDEXER_KEY=/certs/indexer-key.pem
+      - CA_CERT=/certs/root-ca.pem
     ulimits:
       memlock:
         soft: -1
