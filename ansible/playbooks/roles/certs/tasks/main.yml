@@ -12,7 +12,7 @@
     mode: '0755'
 
 - name: Generate Wazuh certificates (idempotent)
-  command: "./wazuh-cert-tool.sh -A"
+  command: "./wazuh-certs-tool.sh -A"
   args:
     chdir: "{{ wazuh_cert_dir }}"
     creates: "{{ wazuh_cert_dir }}/root-ca.pem"
