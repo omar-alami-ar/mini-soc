@@ -48,22 +48,29 @@
     recurse: yes
   when: cert_stat_result.stat.exists
 
-- name: Install pip (for Python package management)
+- name: Install Docker Python SDK via system package manager
   package:
-    name: "{{ item }}"
+    name: python3-docker
     state: present
   become: yes
-  loop:
-    - pipx
-    - python3-setuptools
   ignore_errors: yes
+  register: docker_system_install
 
-- name: Install Docker Python SDK
+- name: Install pip3 if system Docker SDK installation failed
+  package:
+    name: python3-pip
+    state: present
+  become: yes
+  when: docker_system_install.failed | default(false)
+
+- name: Install Docker Python SDK via pip (fallback)
   pip:
     name: docker
     state: present
-    executable: pipx
+    executable: pip3
+    extra_args: --break-system-packages
   become: yes
+  when: docker_system_install.failed | default(false)
 
 - name: Read certificate files from target host
   slurp:
