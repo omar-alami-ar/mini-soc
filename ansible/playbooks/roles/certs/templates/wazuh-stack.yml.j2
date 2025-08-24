@@ -42,7 +42,6 @@ services:
     ports:
       - "9200:9200"
     # Debug mode: Override command to sleep for debugging
-    command: ["sleep", "infinity"]
     # Alternative: Override entrypoint if needed
     # entrypoint: ["sleep", "infinity"]
     secrets:
@@ -50,21 +49,22 @@ services:
         target: /etc/wazuh-indexer/certs/root-ca.pem
         uid: "1000"
         gid: "1000"
-        mode: 0600
+        mode: 0777
       - source: wazuh.indexer.pem
         target: /etc/wazuh-indexer/certs/indexer.pem
         uid: "1000"
         gid: "1000"
-        mode: 0600
+        mode: 0777
       - source: wazuh.indexer-key.pem
         target: /etc/wazuh-indexer/certs/indexer-key.pem
         uid: "1000"
         gid: "1000"
-        mode: 0600
+        mode: 0777
     environment:
       - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g
       - bootstrap.memory_lock=true
       - discovery.type=single-node
+      - java.security.manager=allow
       - network.host=0.0.0.0
       - INDEXER_CERT=/etc/wazuh-indexer/certs/indexer.pem
       - INDEXER_KEY=/etc/wazuh-indexer/certs/indexer-key.pem
