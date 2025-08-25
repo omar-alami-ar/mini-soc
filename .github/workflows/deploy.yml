@@ -17,7 +17,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Create vault password file
+        run: |
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault_pass
+          chmod 600 /tmp/vault_pass
+
       - name: Run Ansible playbook
         run: |
           cd ansible
-          ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml
+          ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml --vault-password-file /tmp/vault_pass
+
+      - name: Clean up vault password file
+        if: always()
+        run: |
+          rm -f /tmp/vault_pass
