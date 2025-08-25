@@ -122,8 +122,13 @@ services:
       - wazuh-manager
     deploy:
       replicas: 1
-
+    volumes:
+      - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh.indexer.yml:/usr/share/wazuh-indexer/opensearch.yml
 secrets:
+  admin.pem:
+    external: true
+  admin-key.pem:
+    external: true
   root-ca.pem:
     external: true
   wazuh.manager.pem:
