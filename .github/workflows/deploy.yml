@@ -30,6 +30,7 @@ jobs:
           docker build -t wazuh-dashboard-custom:4.12.0 -f docker-images/Dockerfile.wazuh-dashboard-extended
 
   deploy:
+    needs: build
     runs-on: self-hosted  # Your VM1 runner
     steps:
       - name: Checkout code
