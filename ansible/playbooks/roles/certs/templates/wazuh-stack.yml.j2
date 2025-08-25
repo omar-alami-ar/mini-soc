@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   wazuh-manager:
-    image: wazuh/wazuh-manager:4.10.3
+    image: wazuh/wazuh-manager:4.12.0
     ports:
       - "0.0.0.0:1514:1514/udp"
       - "0.0.0.0:1515:1515"
@@ -42,7 +42,7 @@ services:
         constraints: [node.role == manager]
 
   wazuh-indexer:
-    image: wazuh/wazuh-indexer:4.10.3
+    image: wazuh/wazuh-indexer:4.12.0
     hostname: wazuh.indexer
     restart: always
     ports:
@@ -92,7 +92,7 @@ services:
       
 
   wazuh-dashboard:
-    image: wazuh/wazuh-dashboard:4.10.3
+    image: wazuh/wazuh-dashboard:4.12.0
     ports:
       - "0.0.0.0:443:5601"
     networks:
