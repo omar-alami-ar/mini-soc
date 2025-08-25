@@ -1,4 +1,7 @@
 # ---
+- name: Load vault variables
+  include_vars: vault.yml
+
 - name: Ensure certs directory exists
   file:
     path: "{{ wazuh_cert_dir }}"
