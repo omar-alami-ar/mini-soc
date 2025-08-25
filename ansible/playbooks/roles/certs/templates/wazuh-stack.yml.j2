@@ -13,27 +13,43 @@ services:
         - wazuh.manager
     secrets:
       - source: root-ca.pem
-        target: /etc/wazuh-manager/certs/root-ca.pem
+        target: /etc/ssl/root-ca.pem
         uid: "999"
         gid: "999"
         mode: 0400
       - source: wazuh.manager.pem
-        target: /etc/wazuh-manager/certs/manager.pem
+        target: /etc/ssl/filebeat.pem
         uid: "999"
         gid: "999"
         mode: 0400
       - source: wazuh.manager-key.pem
-        target: /etc/wazuh-manager/certs/manager-key.pem
+        target: /etc/ssl/filebeat.key
         uid: "999"
         gid: "999"
         mode: 0400
     environment:
-      - INDEXER_URL=https://wazuh-indexer:9200
+      - INDEXER_URL=https://wazuh.indexer:9200
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=SecretPassword
+      - FILEBEAT_SSL_VERIFICATION_MODE=full
+      - SSL_CERTIFICATE_AUTHORITIES=/etc/ssl/root-ca.pem
+      - SSL_CERTIFICATE=/etc/ssl/filebeat.pem
+      - SSL_KEY=/etc/ssl/filebeat.key
       - API_USERNAME=wazuh-wui
       - API_PASSWORD=MyS3cr37P450r.*-
-      - WAZUH_MANAGER_CERT=/etc/wazuh-manager/certs/manager.pem
-      - WAZUH_MANAGER_KEY=/etc/wazuh-manager/certs/manager-key.pem
-      - WAZUH_CA_CERT=/etc/wazuh-manager/certs/root-ca.pem
+    volumes:
+      - wazuh_api_configuration:/var/ossec/api/configuration
+      - wazuh_etc:/var/ossec/etc
+      - wazuh_logs:/var/ossec/logs
+      - wazuh_queue:/var/ossec/queue
+      - wazuh_var_multigroups:/var/ossec/var/multigroups
+      - wazuh_integrations:/var/ossec/integrations
+      - wazuh_active_response:/var/ossec/active-response/bin
+      - wazuh_agentless:/var/ossec/agentless
+      - wazuh_wodles:/var/ossec/wodles
+      - filebeat_etc:/etc/filebeat
+      - filebeat_var:/var/lib/filebeat
+      - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh_manager.conf:/wazuh-config-mount/etc/ossec.conf
     depends_on:
       - wazuh-indexer
     deploy:
@@ -99,6 +115,11 @@ services:
       wazuh-overlay:
         aliases:
         - wazuh.dashboard
+    volumes:
+      - /home/mleo691/config/wazuh_indexer_ssl_certs/opensearch_dashboards.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml
+      - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh.yml:/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml
+      - wazuh-dashboard-config:/usr/share/wazuh-dashboard/data/wazuh/config
+      - wazuh-dashboard-custom:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom
     secrets:
       - source: root-ca.pem
         target: /etc/wazuh-dashboard/certs/root-ca.pem
@@ -106,23 +127,26 @@ services:
         gid: "1000"
         mode: 0400
       - source: wazuh.dashboard.pem
-        target: /etc/wazuh-dashboard/certs/dashboard.pem
+        target: /etc/wazuh-dashboard/certs/wazuh-dashboard.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
       - source: wazuh.dashboard-key.pem
-        target: /etc/wazuh-dashboard/certs/dashboard-key.pem
+        target: /etc/wazuh-dashboard/certs/wazuh-dashboard-key.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
     environment:
-      - OPENSEARCH_HOSTS=https://wazuh-indexer:9200
-      - WAZUH_API_URL=https://wazuh-manager
+      - INDEXER_USERNAME=admin
+      - INDEXER_PASSWORD=SecretPassword
+      - WAZUH_API_URL=https://wazuh.manager
+      - DASHBOARD_USERNAME=kibanaserver
+      - DASHBOARD_PASSWORD=kibanaserver
       - API_USERNAME=wazuh-wui
       - API_PASSWORD=MyS3cr37P450r.*-
-      - DASHBOARD_CERT=/etc/wazuh-dashboard/certs/dashboard.pem
-      - DASHBOARD_KEY=/etc/wazuh-dashboard/certs/dashboard-key.pem
-      - CA_CERT=/etc/wazuh-dashboard/certs/root-ca.pem
+    links:
+      - wazuh.indexer:wazuh.indexer
+      - wazuh.manager:wazuh.manager
     depends_on:
       - wazuh-indexer
       - wazuh-manager
@@ -152,6 +176,20 @@ secrets:
 volumes:
   wazuh-indexer-data:
   wazuh-indexer-logs:
+  wazuh-dashboard-config:
+  wazuh-dashboard-custom:
+  wazuh_api_configuration:
+  wazuh_etc:
+  wazuh_logs:
+  wazuh_queue:
+  wazuh_var_multigroups:
+  wazuh_integrations:
+  wazuh_active_response:
+  wazuh_agentless:
+  wazuh_wodles:
+  filebeat_etc:
+  filebeat_var:
+
 
 networks:
   wazuh-overlay:
