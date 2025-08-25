@@ -116,6 +116,21 @@
   loop: "{{ cert_content.results }}"
   when: cert_stat_result.stat.exists and not item.skipped | default(false)
 
+
+### GENERATE CONFIG FILES ###
+- name: Generate Wazuh configuration files
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ wazuh_config_dir }}/{{ item.dest }}"
+  loop:
+    - { src: "wazuh.indexer.yml.j2", dest: "wazuh.indexer.yml" }
+    - { src: "opensearch_dashboards.yml.j2", dest: "opensearch_dashboards.yml" }
+    - { src: "wazuh.yml.j2", dest: "wazuh.yml" }
+    - { src: "wazuh_manager.conf.j2", dest: "wazuh_manager.conf" }
+### GENERATE CONFIG FILES ###
+
+
+### DEPLOY STACK FILES ###
 - name: Deploy Wazuh stack file
   template:
     src: wazuh-stack.yml.j2
