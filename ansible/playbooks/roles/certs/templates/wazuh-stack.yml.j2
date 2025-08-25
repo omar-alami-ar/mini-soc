@@ -75,16 +75,16 @@ services:
         uid: "1000"
         gid: "1000"
         mode: 0400
-      # - source: admin.pem
-      #   target: /usr/share/wazuh-indexer/certs/admin.pem
-      #   uid: "1000"
-      #   gid: "1000"
-      #   mode: 0444
-      # - source: admin-key.pem
-      #   target: /usr/share/wazuh-indexer/certs/admin-key.pem
-      #   uid: "1000"
-      #   gid: "1000"
-      #   mode: 0400
+      - source: admin.pem
+        target: /usr/share/wazuh-indexer/certs/admin.pem
+        uid: "1000"
+        gid: "1000"
+        mode: 0444
+      - source: admin-key.pem
+        target: /usr/share/wazuh-indexer/certs/admin-key.pem
+        uid: "1000"
+        gid: "1000"
+        mode: 0400
       
 
   wazuh-dashboard:

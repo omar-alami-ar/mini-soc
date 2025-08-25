@@ -95,6 +95,8 @@
   register: cert_content
   loop:
     - root-ca.pem
+    - admin.pem
+    - admin-key.pem
     - wazuh.manager.pem
     - wazuh.manager-key.pem
     - wazuh.indexer.pem
