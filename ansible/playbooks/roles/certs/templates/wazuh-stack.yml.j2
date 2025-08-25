@@ -4,9 +4,8 @@ services:
   wazuh-manager:
     image: wazuh/wazuh-manager:4.10.3
     ports:
-      - "0.0.0.0:1514:1514"
+      - "0.0.0.0:1514:1514/udp"
       - "0.0.0.0:1515:1515"
-      - "0.0.0.0:14:514/udp"
       - "0.0.0.0:55000:55000"
     networks:
       - wazuh-overlay
@@ -50,6 +49,24 @@ services:
       - wazuh-overlay
     environment:
       - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "plugins.security.ssl.transport.pemcert_filepath=/usr/share/wazuh-indexer/certs/wazuh.indexer.pem"
+      - "plugins.security.ssl.transport.pemkey_filepath=/usr/share/wazuh-indexer/certs/wazuh.indexer.key"
+      - "plugins.security.ssl.transport.pemtrustedcas_filepath=/usr/share/wazuh-indexer/certs/root-ca.pem"
+      - "plugins.security.ssl.http.enabled=true"
+      - "plugins.security.ssl.http.pemcert_filepath=/usr/share/wazuh-indexer/certs/wazuh.indexer.pem"
+      - "plugins.security.ssl.http.pemkey_filepath=/usr/share/wazuh-indexer/certs/wazuh.indexer.key"
+      - "plugins.security.ssl.http.pemtrustedcas_filepath=/usr/share/wazuh-indexer/certs/root-ca.pem"
+      - "plugins.security.nodes_dn=CN=wazuh.indexer,OU=Wazuh,O=Wazuh,L=California,C=US"
+      - "plugins.security.authcz.admin_dn=CN=admin,OU=Wazuh,O=Wazuh,L=California,C=US"
+      - "plugins.security.check_snapshot_restore_write_privileges=true"
+      - "plugins.security.enable_snapshot_restore_privilege=true"
+      - "plugins.security.system_indices.enabled=true"
+      - "plugins.security.system_indices.indices=[.plugins-ml-model, .plugins-ml-task, .opendistro-alerting-config, .opendistro-alerting-alert*, .opendistro-anomaly-detector*, .opendistro-asynchronous-search-response*, .opendistro-ism-*, .opendistro-knn-models, .opendistro-notebooks, .opendistro-reports-*, .opensearch-observability, .opensearch-sap-log-types-config, .opensearch-sap-* .opendistro-sql-*, .opensearch-dashboards]"
+      - "network.host=0.0.0.0"
+      - "node.name=wazuh.indexer"
+      - "cluster.initial_master_nodes=wazuh.indexer"
+      - "cluster.name=wazuh-cluster"
+      - "discovery.type=single-node"
     ulimits:
       memlock:
         soft: -1
@@ -59,7 +76,7 @@ services:
         hard: 65536
     volumes:
       - wazuh-indexer-data:/var/lib/wazuh-indexer
-      - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh.indexer.yml:/usr/share/wazuh-indexer/opensearch.yml
+      - wazuh-indexer-logs:/var/log/wazuh-indexer
       - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh-certificates/root-ca.pem:/usr/share/wazuh-indexer/certs/root-ca.pem
       - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh-certificates/wazuh.indexer-key.pem:/usr/share/wazuh-indexer/certs/wazuh.indexer.key
       - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh-certificates/wazuh.indexer.pem:/usr/share/wazuh-indexer/certs/wazuh.indexer.pem
