@@ -11,6 +11,24 @@ on:
     branches: [ "main" ]
 
 jobs:
+  build:
+    runs-on: self-hosted  # Your VM1 runner
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build indexer image
+        run: |
+          docker build -t wazuh-indexer-custom:4.12.0 -f docker-images/Dockerfile.wazuh-indexer-extended
+      
+      - name: Build manager image
+        run: |
+          docker build -t wazuh-manager-custom:4.12.0 -f docker-images/Dockerfile.wazuh-manager-extended
+      
+      - name: Build dashboard image
+        run: |
+          docker build -t wazuh-dashboard-custom:4.12.0 -f docker-images/Dockerfile.wazuh-dashboard-extended
+
   deploy:
     runs-on: self-hosted  # Your VM1 runner
     steps:
