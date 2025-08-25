@@ -20,7 +20,6 @@ jobs:
       - name: Build indexer image
         run: |
           docker build -t wazuh-indexer-custom:4.12.0 -f Dockerfile.wazuh-indexer-extended .
-      
       - name: Build manager image
         run: |
           docker build -t wazuh-manager-custom:4.12.0 -f Dockerfile.wazuh-manager-extended .
