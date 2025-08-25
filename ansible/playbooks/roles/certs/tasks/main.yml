@@ -118,6 +118,12 @@
 
 
 ### GENERATE CONFIG FILES ###
+- name: Ensure config directory exists
+  file:
+    path: "{{ wazuh_config_dir }}"
+    state: directory
+    mode: '0755'
+
 - name: Generate Wazuh configuration files
   template:
     src: "{{ item.src }}"
