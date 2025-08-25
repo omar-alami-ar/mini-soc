@@ -1,6 +1,20 @@
 ---
 # Variables for the certs role
 ansible_user: mleo691
+
 wazuh_cert_dir: /home/{{ ansible_user }}/config/wazuh_indexer_ssl_certs
 wazuh_config_dir: /home/{{ ansible_user }}/config/wazuh_config
-wazuh_stack_file: /home/{{ ansible_user }}/config/wazuh-stack.yml
+wazuh_stack_file: /home/{{ ansible_user }}/config/wazuh-stack.
+
+wazuh_indexer_ip: wazuh.indexer
+wazuh_indexer_username: admin
+wazuh_indexer_password: SecretPassword
+
+wazuh_manager_ip: wazuh.manager
+wazuh_manager_username: wazuh-wui
+wazuh_manager_password: MyS3cr37P450r.*-
+
+wazuh_dashboard_ip: wazuh.dashboard 
+wazuh_dashboard_username: kibanaserver
+wazuh_dashboard_password: kibanaserver
+

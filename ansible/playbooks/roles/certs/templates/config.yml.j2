@@ -1,0 +1,13 @@
+nodes:
+  indexer:
+    - name: wazuh.indexer
+      ip: {{ wazuh_indexer_ip }}
+      dns: {{ wazuh_indexer_ip }}
+  server:
+    - name: wazuh.manager
+      ip: {{ wazuh_manager_ip }}
+      dns: {{ wazuh_manager_ip }}
+  dashboard:
+    - name: wazuh.dashboard
+      ip: {{ wazuh_dashboard_ip }}
+      dns: {{ wazuh_dashboard_ip }}

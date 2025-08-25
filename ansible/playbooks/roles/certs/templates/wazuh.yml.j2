@@ -1,7 +1,7 @@
 hosts:
   - 1513629884013:
-      url: "https://wazuh.manager"
+      url: "https://{{ wazuh_manager_ip }}"
       port: 55000
-      username: wazuh-wui
-      password: "MyS3cr37P450r.*-"
+      username: "{{ wazuh_manager_username }}"
+      password: "{{ wazuh_manager_password }}"
       run_as: false

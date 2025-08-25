@@ -28,15 +28,15 @@ services:
         gid: "999"
         mode: 0400
     environment:
-      - INDEXER_URL=https://wazuh.indexer:9200
-      - INDEXER_USERNAME=admin
-      - INDEXER_PASSWORD=SecretPassword
+      - INDEXER_URL=https://{{ wazuh_indexer_ip }}:9200
+      - INDEXER_USERNAME={{ wazuh_indexer_username }}
+      - INDEXER_PASSWORD={{ wazuh_indexer_password }}
       - FILEBEAT_SSL_VERIFICATION_MODE=full
       - SSL_CERTIFICATE_AUTHORITIES=/etc/ssl/root-ca.pem
       - SSL_CERTIFICATE=/etc/ssl/filebeat.pem
       - SSL_KEY=/etc/ssl/filebeat.key
-      - API_USERNAME=wazuh-wui
-      - API_PASSWORD=MyS3cr37P450r.*-
+      - API_USERNAME={{ wazuh_manager_username }}
+      - API_PASSWORD={{ wazuh_manager_password }}
     volumes:
       - wazuh_api_configuration:/var/ossec/api/configuration
       - wazuh_etc:/var/ossec/etc
@@ -137,13 +137,13 @@ services:
         gid: "1000"
         mode: 0400
     environment:
-      - INDEXER_USERNAME=admin
-      - INDEXER_PASSWORD=SecretPassword
-      - WAZUH_API_URL=https://wazuh.manager
-      - DASHBOARD_USERNAME=kibanaserver
-      - DASHBOARD_PASSWORD=kibanaserver
-      - API_USERNAME=wazuh-wui
-      - API_PASSWORD=MyS3cr37P450r.*-
+      - INDEXER_USERNAME={{ wazuh_indexer_username }}
+      - INDEXER_PASSWORD={{ wazuh_indexer_password }}
+      - WAZUH_API_URL=https://{{ wazuh_manager_ip }}
+      - DASHBOARD_USERNAME={{ wazuh_dashboard_username }}
+      - DASHBOARD_PASSWORD={{ wazuh_dashboard_password }}
+      - API_USERNAME={{ wazuh_manager_username }}
+      - API_PASSWORD={{ wazuh_manager_password }}
     links:
       - wazuh.indexer:wazuh.indexer
       - wazuh.manager:wazuh.manager

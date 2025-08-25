@@ -11,23 +11,10 @@
     dest: "{{ wazuh_cert_dir }}/wazuh-certs-tool.sh"
     mode: '0755'
 
-- name: Deploy Wazuh cert configuration
-  copy:
+- name: Generate Wazuh cert configuration
+  template:
+    src: config.yml.j2
     dest: "{{ wazuh_cert_dir }}/config.yml"
-    content: |
-      nodes:
-        indexer:
-          - name: wazuh.indexer
-            ip: wazuh.indexer
-            dns: wazuh.indexer
-        server:
-          - name: wazuh.manager
-            ip: wazuh.manager
-            dns: wazuh.manager
-        dashboard:
-          - name: wazuh.dashboard
-            ip: wazuh.dashboard
-            dns: wazuh.dashboard
 
 - name: Check if certificates already exist
   stat:
