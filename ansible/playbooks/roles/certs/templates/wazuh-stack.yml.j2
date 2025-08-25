@@ -122,17 +122,17 @@ services:
       - wazuh-dashboard-custom:/usr/share/wazuh-dashboard/plugins/wazuh/public/assets/custom
     secrets:
       - source: root-ca.pem
-        target: /etc/wazuh-dashboard/certs/root-ca.pem
+        target: /usr/share/wazuh-dashboard/certs/root-ca.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
       - source: wazuh.dashboard.pem
-        target: /etc/wazuh-dashboard/certs/wazuh-dashboard.pem
+        target: /usr/share/wazuh-dashboard/certs/wazuh-dashboard.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
       - source: wazuh.dashboard-key.pem
-        target: /etc/wazuh-dashboard/certs/wazuh-dashboard-key.pem
+        target: /usr/share/wazuh-dashboard/certs/wazuh-dashboard-key.pem
         uid: "1000"
         gid: "1000"
         mode: 0400
