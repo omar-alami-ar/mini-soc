@@ -57,7 +57,7 @@ services:
         soft: 65536
         hard: 65536
     volumes:
-
+      - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh.indexer.yml:/usr/share/wazuh-indexer/opensearch.yml
       - wazuh-indexer-data:/var/lib/wazuh-indexer
     secrets:
       - source: root-ca.pem
@@ -122,8 +122,7 @@ services:
       - wazuh-manager
     deploy:
       replicas: 1
-    volumes:
-      - /home/mleo691/config/wazuh_indexer_ssl_certs/wazuh.indexer.yml:/usr/share/wazuh-indexer/opensearch.yml
+
 secrets:
   admin.pem:
     external: true
