@@ -1,4 +1,32 @@
 ---
+- name: Install required Python packages for Docker management
+  ansible.builtin.package:
+    name: 
+      - python3-docker
+      - python3-jsondiff
+    state: present
+  become: true
+  ignore_errors: true
+  register: packages_system_install
+
+- name: Install pip3 if system packages installation failed
+  ansible.builtin.package:
+    name: python3-pip
+    state: present
+  become: true
+  when: packages_system_install.failed | default(false)
+
+- name: Install Docker and jsondiff Python packages via pip (fallback)
+  ansible.builtin.pip:
+    name: 
+      - docker
+      - jsondiff
+    state: present
+    executable: pip3
+    extra_args: --break-system-packages
+  become: true
+  when: packages_system_install.failed | default(false)
+
 - name: Create Traefik config directories
   ansible.builtin.file:
     path: "{{ item }}"
