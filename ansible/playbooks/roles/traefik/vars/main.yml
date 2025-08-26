@@ -14,7 +14,7 @@ letsencrypt_email: "{{ vault_letsencrypt_email | default('admin@' + traefik_doma
 letsencrypt_staging: "{{ vault_letsencrypt_staging | default(true) }}"
 
 # Traefik version
-traefik_version: "v3.0"
+traefik_version: "v3.1"
 
 # Security
 traefik_dashboard_enabled: true

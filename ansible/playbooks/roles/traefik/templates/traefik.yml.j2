@@ -23,11 +23,11 @@ entryPoints:
         options: default
 
 providers:
-  docker:
+  swarm:
     endpoint: "unix:///var/run/docker.sock"
-    swarmMode: true
     exposedByDefault: false
     network: "{{ traefik_network }}"
+    watch: true
   file:
     filename: /etc/traefik/dynamic.yml
     watch: true
