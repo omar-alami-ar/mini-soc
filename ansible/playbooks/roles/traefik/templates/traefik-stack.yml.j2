@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:{{ traefik_version }}
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - {{ traefik_network }}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - {{ traefik_config_dir }}/traefik.yml:/etc/traefik/traefik.yml:ro
+      - {{ traefik_config_dir }}/dynamic.yml:/etc/traefik/dynamic.yml:ro
+      - {{ traefik_data_dir }}/letsencrypt:/data/letsencrypt
+    environment:
+      - TRAEFIK_LOG_LEVEL=INFO
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.traefik.rule=Host(`{{ traefik_dashboard_subdomain }}.{{ traefik_domain }}`)"
+        - "traefik.http.routers.traefik.entrypoints=websecure"
+{% if not letsencrypt_staging %}
+        - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+{% else %}
+        - "traefik.http.routers.traefik.tls.certresolver=letsencrypt-staging"
+{% endif %}
+        - "traefik.http.routers.traefik.service=api@internal"
+        - "traefik.http.routers.traefik.middlewares=basic-auth@file,secure-headers@file"
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 60s
+        max_failure_ratio: 0.3
+
+networks:
+  {{ traefik_network }}:
+    external: true

@@ -1,0 +1,61 @@
+# Traefik Static Configuration
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+api:
+  dashboard: {{ traefik_dashboard_enabled | lower }}
+  insecure: false
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: ":443"
+    http:
+      tls:
+        options: default
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    swarmMode: true
+    exposedByDefault: false
+    network: "{{ traefik_network }}"
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+
+certificatesResolvers:
+{% if not letsencrypt_staging %}
+  letsencrypt:
+    acme:
+      email: {{ letsencrypt_email }}
+      storage: /data/letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: web
+{% else %}
+  letsencrypt-staging:
+    acme:
+      email: {{ letsencrypt_email }}
+      storage: /data/letsencrypt/acme-staging.json
+      caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      httpChallenge:
+        entryPoint: web
+{% endif %}
+
+log:
+  level: INFO
+
+accessLog: {}
+
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addServicesLabels: true

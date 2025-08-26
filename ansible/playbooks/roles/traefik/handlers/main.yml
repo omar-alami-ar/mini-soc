@@ -1,0 +1,8 @@
+---
+- name: restart traefik
+  community.docker.docker_stack:
+    name: traefik
+    compose:
+      - "{{ traefik_config_dir }}/traefik-stack.yml"
+    state: present
+    restarted: true

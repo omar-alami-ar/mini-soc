@@ -17,3 +17,8 @@ wazuh_manager_password: "{{ vault_wazuh_manager_password }}"
 wazuh_dashboard_ip: wazuh.dashboard
 wazuh_dashboard_username: kibanaserver
 wazuh_dashboard_password: "{{ vault_wazuh_dashboard_password }}"
+
+# Traefik integration variables
+traefik_domain: "{{ vault_traefik_domain | default('soc.local') }}"
+wazuh_dashboard_subdomain: "wazuh"
+letsencrypt_staging: "{{ vault_letsencrypt_staging | default(true) }}"

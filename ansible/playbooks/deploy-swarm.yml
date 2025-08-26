@@ -5,4 +5,5 @@
 
   roles:
    # - swarm
+    - traefik
     - wazuh

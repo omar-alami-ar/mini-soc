@@ -12,7 +12,7 @@ on:
 
 jobs:
   # build:
-  #   runs-on: self-hosted  # Your VM1 runner
+  #   runs-on: self-hosted
   #   steps:
   #     - name: Checkout code
   #       uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
 
   # scan:
   #   needs: build
-  #   runs-on: self-hosted  # Your VM1 runner
+  #   runs-on: self-hosted
   #   steps:
   #     - name: Checkout code
   #       uses: actions/checkout@v4
@@ -48,36 +48,41 @@ jobs:
   #       run: |
   #         sudo trivy image wazuh-dashboard-custom:4.12.0 --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1  
   
-  lint:
-    # needs: scan
-    runs-on: self-hosted  # Your VM1 runner
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run ansible-lint
-        run: |
-          cd ansible
-          ansible-lint playbooks/ --exclude=.ansible-lint-ignore
-  
-  # deploy:
-  #   needs: lint
-  #   runs-on: self-hosted  # Your VM1 runner
+  # lint:
+  #   needs: scan
+  #   runs-on: self-hosted
   #   steps:
   #     - name: Checkout code
   #       uses: actions/checkout@v4
 
-  #     - name: Create vault password file
-  #       run: |
-  #         echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault_pass
-  #         chmod 600 /tmp/vault_pass
-
-  #     - name: Run Ansible playbook
+  #     - name: Run ansible-lint
   #       run: |
   #         cd ansible
-  #         ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml --vault-password-file /tmp/vault_pass
+  #         ansible-lint playbooks/ --exclude=.ansible-lint-ignore
+  
+  deploy:
+    # needs: lint
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Clean up vault password file
-  #       if: always()
-  #       run: |
-  #         rm -f /tmp/vault_pass
+      - name: Create vault password file
+        run: |
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault_pass
+          chmod 600 /tmp/vault_pass
+      
+      - name: Run Ansible playbook to deploy traefik
+        run: |
+          cd ansible
+          ansible-playbook -i inventory.ini playbooks/deploy-traefik.yml --vault-password-file /tmp/vault_pass
+
+      # - name: Run Ansible playbook to deploy swarm and wazuh
+      #   run: |
+      #     cd ansible
+      #     ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml --vault-password-file /tmp/vault_pass
+
+      - name: Clean up vault password file
+        if: always()
+        run: |
+          rm -f /tmp/vault_pass
