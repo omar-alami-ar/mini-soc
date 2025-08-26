@@ -1,7 +1,7 @@
 ---
 - name: Setup Docker Swarm and deploy stack
   hosts: swarm
-  become: yes
+  become: true
 
   roles:
    # - swarm

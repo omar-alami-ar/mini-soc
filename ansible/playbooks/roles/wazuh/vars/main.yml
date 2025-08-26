@@ -14,7 +14,6 @@ wazuh_manager_ip: wazuh.manager
 wazuh_manager_username: wazuh-wui
 wazuh_manager_password: "{{ vault_wazuh_manager_password }}"
 
-wazuh_dashboard_ip: wazuh.dashboard 
+wazuh_dashboard_ip: wazuh.dashboard
 wazuh_dashboard_username: kibanaserver
 wazuh_dashboard_password: "{{ vault_wazuh_dashboard_password }}"
-
