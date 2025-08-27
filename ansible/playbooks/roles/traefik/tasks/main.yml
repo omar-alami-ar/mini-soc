@@ -1,4 +1,7 @@
 ---
+- name: Load vault variables
+  ansible.builtin.include_vars: vault.yml
+  
 - name: Install required Python packages for Docker management
   ansible.builtin.package:
     name: 
