@@ -121,6 +121,12 @@
     src: wazuh-template.json.j2
     dest: "{{ wazuh_config_dir }}/wazuh-template.json"
 
+- name: Generate filebeat.yml
+  ansible.builtin.template:
+    src: filebeat.yml.j2
+    dest: "{{ wazuh_config_dir }}/filebeat.yml"
+
+
 - name: Generate Wazuh configuration files
   ansible.builtin.template:
     src: "{{ item.src }}"

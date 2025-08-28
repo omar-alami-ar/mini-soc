@@ -51,6 +51,7 @@ services:
       - filebeat_var:/var/lib/filebeat
       - "{{ wazuh_config_dir }}/wazuh_manager.conf:/wazuh-config-mount/etc/ossec.conf"
       - "{{ wazuh_config_dir }}/wazuh-template.json:/etc/filebeat/wazuh-template.json"
+      - "{{ wazuh_config_dir }}/filebeat.yml:/etc/filebeat/filebeat.yml"
     depends_on:
       - wazuh-indexer
     deploy:
