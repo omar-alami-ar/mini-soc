@@ -116,6 +116,11 @@
     state: directory
     mode: '0755'
 
+- name: Generate wazuh-template.json
+  ansible.builtin.template:
+    src: wazuh-template.json.j2
+    dest: "{{ wazuh_config_dir }}/wazuh-template.json"
+
 - name: Generate Wazuh configuration files
   ansible.builtin.template:
     src: "{{ item.src }}"
