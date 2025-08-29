@@ -11,42 +11,42 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # build:
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Build indexer image
-        run: |
-          sudo docker build -t wazuh-indexer-custom:4.12.0 -f Dockerfile.wazuh-indexer-extended .
+  #     - name: Build indexer image
+  #       run: |
+  #         sudo docker build -t wazuh-indexer-custom:4.12.0 -f Dockerfile.wazuh-indexer-extended .
           
-      - name: Build manager image
-        run: |
-          sudo docker build -t wazuh-manager-custom:4.12.0 -f Dockerfile.wazuh-manager-extended .
+  #     - name: Build manager image
+  #       run: |
+  #         sudo docker build -t wazuh-manager-custom:4.12.0 -f Dockerfile.wazuh-manager-extended .
       
-      - name: Build dashboard image
-        run: |
-          sudo docker build -t wazuh-dashboard-custom:4.12.0 -f Dockerfile.wazuh-dashboard-extended .
+  #     - name: Build dashboard image
+  #       run: |
+  #         sudo docker build -t wazuh-dashboard-custom:4.12.0 -f Dockerfile.wazuh-dashboard-extended .
 
-  scan:
-    needs: build
-    runs-on: self-hosted
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  # scan:
+  #   needs: build
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Scan indexer image
-        run: |
-          sudo trivy image wazuh-indexer-custom:4.12.0 --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 
+  #     - name: Scan indexer image
+  #       run: |
+  #         sudo trivy image wazuh-indexer-custom:4.12.0 --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 
 
-      - name: Scan manager image
-        run: |
-          sudo trivy image wazuh-manager-custom:4.12.0 --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 
+  #     - name: Scan manager image
+  #       run: |
+  #         sudo trivy image wazuh-manager-custom:4.12.0 --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1 
       
-      - name: Scan dashboard image
-        run: |
-          sudo trivy image wazuh-dashboard-custom:4.12.0 --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1  
+  #     - name: Scan dashboard image
+  #       run: |
+  #         sudo trivy image wazuh-dashboard-custom:4.12.0 --ignore-unfixed --severity HIGH,CRITICAL --exit-code 1  
   
   # lint:
   #   needs: scan
@@ -60,28 +60,28 @@ jobs:
   #         cd ansible
   #         ansible-lint playbooks/ --exclude=.ansible-lint-ignore
   
-  # deploy:
-  #   # needs: lint
-  #   runs-on: self-hosted
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
+  deploy:
+  #  needs: lint
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  #     - name: Create vault password file
-  #       run: |
-  #         echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault_pass
-  #         chmod 600 /tmp/vault_pass
+      - name: Create vault password file
+        run: |
+          echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > /tmp/vault_pass
+          chmod 600 /tmp/vault_pass
       
-  #     # - name: Run Ansible playbook to deploy traefik
-  #     #   run: |
-  #     #     cd ansible
-  #     #     ansible-playbook -i inventory.ini playbooks/deploy-traefik.yml --vault-password-file /tmp/vault_pass
-  #     - name: Run Ansible playbook to deploy swarm and wazuh
-  #       run: |
-  #         cd ansible
-  #         ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml --vault-password-file /tmp/vault_pass
+      - name: Run Ansible playbook to deploy traefik
+        run: |
+          cd ansible
+          ansible-playbook -i inventory.ini playbooks/deploy-traefik.yml --vault-password-file /tmp/vault_pass
+      - name: Run Ansible playbook to deploy swarm and wazuh
+        run: |
+          cd ansible
+          ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml --vault-password-file /tmp/vault_pass
 
-  #     - name: Clean up vault password file
+  #    - name: Clean up vault password file
   #       if: always()
   #       run: |
   #         rm -f /tmp/vault_pass

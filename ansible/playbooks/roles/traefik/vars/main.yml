@@ -6,8 +6,8 @@ traefik_data_dir: /home/{{ ansible_user }}/data/traefik
 
 # Domain configuration
 traefik_domain: "{{ vault_traefik_domain | default('soc.local') }}"
-traefik_dashboard_subdomain: "traefik"
-wazuh_dashboard_subdomain: "wazuh"
+traefik_dashboard_subdomain: "traefik-soc"
+wazuh_dashboard_subdomain: "wazuh-soc"
 
 # Let's Encrypt configuration
 letsencrypt_email: "{{ vault_letsencrypt_email | default('admin@' + traefik_domain) }}"

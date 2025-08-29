@@ -21,6 +21,7 @@ entryPoints:
     http:
       tls:
         options: default
+        certResolver: {% if not letsencrypt_staging %}letsencrypt{% else %}letsencrypt-staging{% endif %}
 
 providers:
   swarm:
