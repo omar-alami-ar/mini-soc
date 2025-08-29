@@ -157,7 +157,7 @@ services:
       replicas: 1
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.wazuh.rule=Host(`{{ wazuh_dashboard_subdomain | default('wazuh') }}.{{ traefik_domain | default('soc.local') }}`)"
+        - "traefik.http.routers.wazuh.rule=Host(`{{ wazuh_dashboard_subdomain | default('wazuh') }}.{{ wazuh_traefik_domain | default('soc.local') }}`)"
         - "traefik.http.routers.wazuh.entrypoints=websecure"
         - "traefik.http.routers.wazuh.tls.certresolver={{ 'letsencrypt' if not letsencrypt_staging else 'letsencrypt-staging' }}"
         - "traefik.http.routers.wazuh.middlewares=default-headers@file,secure-headers@file"
