@@ -116,8 +116,6 @@ services:
         aliases:
         - wazuh.dashboard
       traefik-public:
-#    ports:
-#      - "0.0.0.0:443:5601"
     volumes:
       - "{{ wazuh_config_dir }}/opensearch_dashboards.yml:/usr/share/wazuh-dashboard/config/opensearch_dashboards.yml"
       - "{{ wazuh_config_dir }}/wazuh.yml:/usr/share/wazuh-dashboard/data/wazuh/config/wazuh.yml"
@@ -155,14 +153,17 @@ services:
       - wazuh-manager
     deploy:
       replicas: 1
+      placement:
+        constraints: [node.role == manager]
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.wazuh.rule=Host(`{{ wazuh_dashboard_subdomain | default('wazuh') }}.{{ wazuh_traefik_domain | default('soc.local') }}`)"
+        - "traefik.http.routers.wazuh.rule=Host(`{{ wazuh_dashboard_subdomain }}.{{ wazuh_traefik_domain }}`)"
         - "traefik.http.routers.wazuh.entrypoints=websecure"
         - "traefik.http.routers.wazuh.tls.certresolver={{ 'letsencrypt' if not letsencrypt_staging else 'letsencrypt-staging' }}"
         - "traefik.http.routers.wazuh.middlewares=default-headers@file,secure-headers@file"
         - "traefik.http.services.wazuh.loadbalancer.server.port=5601"
         - "traefik.docker.network=traefik-public"
+        - "traefik.http.services.wazuh.loadbalancer.server.scheme=http"
 
 secrets:
   admin.pem:
