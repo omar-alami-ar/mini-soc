@@ -111,6 +111,8 @@ services:
 
   wazuh-dashboard:
     image: wazuh/wazuh-dashboard:4.12.0
+    ports:
+      - "5601:5601"
     networks:
       wazuh-overlay:
         aliases:
