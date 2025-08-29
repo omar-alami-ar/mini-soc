@@ -76,12 +76,12 @@ jobs:
         run: |
           cd ansible
           ansible-playbook -i inventory.ini playbooks/deploy-traefik.yml --vault-password-file /tmp/vault_pass
-  #     - name: Run Ansible playbook to deploy swarm and wazuh
-  #       run: |
-  #         cd ansible
-  #         ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml --vault-password-file /tmp/vault_pass
+      - name: Run Ansible playbook to deploy swarm and wazuh
+        run: |
+          cd ansible
+          ansible-playbook -i inventory.ini playbooks/deploy-swarm.yml --vault-password-file /tmp/vault_pass
 
-  #     - name: Clean up vault password file
+  #    - name: Clean up vault password file
   #       if: always()
   #       run: |
   #         rm -f /tmp/vault_pass
